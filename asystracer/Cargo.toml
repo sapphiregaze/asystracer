@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+  "asystracer-ebpf",
+  "asystracer-userspace"
+]
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+aya = { git = "https://github.com/aya-rs/aya", default-features = false }
+aya-build = { git = "https://github.com/aya-rs/aya", default-features = false }
+aya-ebpf = { git = "https://github.com/aya-rs/aya", default-features = false }
+aya-log = { git = "https://github.com/aya-rs/aya", default-features = false }
+aya-log-ebpf = { git = "https://github.com/aya-rs/aya", default-features = false }
+
+cargo_metadata = { version = "0.23.0", default-features = false }
+which = { version = "6.0.0", default-features = false }
+
+anyhow = { version = "1", default-features = false }
+env_logger = { version = "0.11", default-features = false }
+log = { version = "0.4.22", default-features = false }
+tokio = { version = "1.40.0", default-features = false, features = [
+  "rt-multi-thread",
+  "macros",
+  "time",
+  "signal"
+] }
+
+[profile.release.package.asystracer-ebpf]
+debug = 2
+codegen-units = 1

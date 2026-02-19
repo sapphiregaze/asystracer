@@ -1,0 +1,16 @@
+[package]
+name = "asystracer-userspace"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+aya = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+env_logger = { workspace = true }
+
+[build-dependencies]
+anyhow = { workspace = true }
+aya-build = { workspace = true }
+cargo_metadata = { workspace = true }
