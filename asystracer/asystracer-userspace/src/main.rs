@@ -1,4 +1,6 @@
+use anyhow::Ok;
 use aya::{Ebpf, include_bytes_aligned, maps::RingBuf, programs::TracePoint};
+use clap::Parser;
 use log::{info, warn};
 use tokio::time::Duration;
 
@@ -9,6 +11,16 @@ const MAX_EVENTS_PER_TICK: usize = 512;
 struct SyscallEvent {
     pid: u32,
     syscall_id: i64,
+}
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    #[arg(short, long, default_value_t = 0)]
+    pid: u32,
+
+    #[arg(short, long)]
+    all: bool,
 }
 
 pub async fn init_ebpf() -> anyhow::Result<Ebpf> {
@@ -33,6 +45,8 @@ pub async fn init_ebpf() -> anyhow::Result<Ebpf> {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let args = Args::parse();
+
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let mut ebpf = init_ebpf().await?;
@@ -68,6 +82,10 @@ async fn main() -> anyhow::Result<()> {
                     let event: SyscallEvent = unsafe {
                         std::ptr::read_unaligned(data.as_ptr() as *const SyscallEvent)
                     };
+
+                    if !args.all && args.pid != 0 && event.pid != args.pid {
+                        continue;
+                    }
 
                     println!(
                         "pid={:<8} syscall_id={:<6}  ({})",

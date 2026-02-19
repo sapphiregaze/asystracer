@@ -5,6 +5,7 @@ edition.workspace = true
 
 [dependencies]
 aya = { workspace = true }
+clap = { workspace  = true }
 log = { workspace = true }
 tokio = { workspace = true }
 anyhow = { workspace = true }
