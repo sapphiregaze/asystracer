@@ -58,10 +58,12 @@ async fn main() -> anyhow::Result<()> {
         .ok_or_else(|| anyhow::anyhow!("map 'EVENTS' not found"))?;
     let mut ring_buf = RingBuf::try_from(map)?;
 
+    let ctrl_c = tokio::signal::ctrl_c();
+    tokio::pin!(ctrl_c);
+
     loop {
-        tokio::time::sleep(Duration::from_millis(100)).await;
         tokio::select! {
-            _ = tokio::signal::ctrl_c() => {
+            _ = &mut ctrl_c => {
                 info!("Shutting down.");
                 break;
             }
